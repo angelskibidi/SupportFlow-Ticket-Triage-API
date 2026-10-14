@@ -65,6 +65,5 @@ Filter tickets:
 GET /api/tickets?status=open&priority=high
 ```
 
-## How to discuss the project
 
-I built a small ticket-triage service to practice backend software development. I designed REST endpoints, added SQLite constraints and input validation, wrote pytest coverage for normal and error cases, and packaged the service with Docker. The main lesson was separating route handling, validation, persistence, and testing so each part could be debugged independently.
+
