@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SupportFlow Ticket Triage</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #f4f7fb; color: #172033; }
+    h1 { margin-bottom: .25rem; } .subtitle { color: #52617a; }
+    form, .ticket { background: white; padding: 1rem; border-radius: 10px; margin: 1rem 0; box-shadow: 0 2px 8px #00000012; }
+    input, textarea, select, button { padding: .65rem; margin: .25rem 0; border: 1px solid #c8d0dc; border-radius: 6px; font: inherit; }
+    input, textarea { width: 100%; box-sizing: border-box; } textarea { min-height: 80px; }
+    button { background: #1261a0; color: white; cursor: pointer; } .tag { font-size: .85rem; padding: .2rem .45rem; border-radius: 5px; background: #e5eef8; }
+  </style>
+</head>
+<body>
+  <h1>SupportFlow Ticket Triage</h1>
+  <p class="subtitle">A small REST API and dashboard for tracking software issues.</p>
+  <form id="ticket-form">
+    <input id="title" placeholder="Issue title" required>
+    <textarea id="description" placeholder="Description" required></textarea>
+    <select id="priority"><option>low</option><option selected>medium</option><option>high</option></select>
+    <button>Create ticket</button>
+  </form>
+  <section id="tickets"></section>
+  <script>
+    async function loadTickets() {
+      const response = await fetch('/api/tickets');
+      const tickets = await response.json();
+      document.querySelector('#tickets').innerHTML = tickets.map(ticket => `
+        <article class="ticket"><strong>#${ticket.id} ${ticket.title}</strong>
+        <span class="tag">${ticket.priority}</span> <span class="tag">${ticket.status}</span>
+        <p>${ticket.description}</p></article>`).join('') || '<p>No tickets yet.</p>';
+    }
+    document.querySelector('#ticket-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      await fetch('/api/tickets', { method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ title: title.value, description: description.value, priority: priority.value }) });
+      event.target.reset(); loadTickets();
+    });
+    loadTickets();
+  </script>
+</body>
+</html>
